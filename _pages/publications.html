@@ -1,0 +1,238 @@
+---
+layout: archive
+title: "Publications"
+permalink: /publications/
+author_profile: true
+---
+
+{% if site.author.googlescholar %}
+  <div class="wordwrap">You can also find my articles on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
+{% endif %}
+<p style="color: gray; font-size: 0.9em;">
+  Note: Some duplicate entries may appear as this list is fetched automatically from ORCID data.
+</p>
+
+{% include base_path %}
+
+
+
+<!-- <div id="pubs"></div>
+<script>
+(async () => {
+  // ==== CONFIG ====
+  const ORCID = "0000-0003-3950-0881";  // <-- put your ORCID here
+  const MAX_AUTHORS = 6;                // show up to N authors before "et al."
+  const PER_PAGE = 50;                  // how many to fetch (OpenAlex caps apply)
+
+  // helper: pick a good URL to the paper
+  const bestUrl = (w) =>
+    w.primary_location?.landing_page_url ||
+    w.open_access?.oa_url ||
+    (w.doi ? `https://doi.org/${w.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//,'')}` : null) ||
+    w.primary_location?.source?.homepage_url ||
+    w.id;
+
+  // helper: format authors array nicely, bold yourself if ORCID matches
+  const fmtAuthors = (authorships) => {
+    const names = (authorships || []).map(a => {
+      const person = a.author ?? {};
+      const name = person.display_name || person.orcid || "Unknown";
+      const isYou = (person.orcid || "").replace(/^https?:\/\/orcid\.org\//, "") === ORCID;
+      return isYou ? `<strong>${name}</strong>` : name;
+    });
+
+    if (names.length <= MAX_AUTHORS) return names.join(", ");
+
+    // compact with et al.
+    return names.slice(0, MAX_AUTHORS).join(", ") + ", <em>et&nbsp;al.</em>";
+  };
+
+  // helper: venue (journal) string
+  const fmtVenue = (w) => w.host_venue?.display_name ? `<em>${w.host_venue.display_name}</em>` : "";
+
+  // helper: DOI badge (optional)
+  const fmtDOI = (w) => {
+    if (!w.doi) return "";
+    const doiClean = w.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//,'');
+    return ` <a href="https://doi.org/${doiClean}" target="_blank" rel="noopener">DOI</a>`;
+  };
+
+  // fetch works by ORCID, newest first
+  const url = `https://api.openalex.org/works?filter=authorships.author.orcid:${ORCID}&sort=publication_year:desc&per_page=${PER_PAGE}`;
+  const res = await fetch(url, { headers: { "Accept": "application/json" }});
+  const data = await res.json();
+
+  const items = (data.results || []).map(w => {
+    const title = w.title ?? "(untitled)";
+    const year  = w.publication_year ?? "";
+    const authors = fmtAuthors(w.authorships);
+    const venue = fmtVenue(w);
+    const link = bestUrl(w) || "#";
+
+    return `
+      <li class="pub-item">
+        <span class="pub-title"><a href="${link}" target="_blank" rel="noopener">${title}</a></span><br>
+        <span class="pub-authors">${authors}</span>
+        ${venue ? `, ${venue}` : ""} ${year ? ` (${year})` : ""}
+        ${fmtDOI(w)}
+      </li>
+    `;
+  }).join("");
+
+  document.getElementById("pubs").innerHTML = `
+    <div class="pubs-wrap">
+      <ul class="pubs-list">
+        ${items || "<li>No publications found.</li>"}
+      </ul>
+    </div>
+  `;
+})();
+</script> -->
+
+
+
+
+
+<div id="all-publications"></div>
+<div id="datasets"></div>
+<div id="comments-responses"></div>
+
+
+
+<script>
+(async () => {
+  // ==== CONFIG ====
+  const ORCID = "0000-0003-3950-0881"; // <-- your ORCID
+  const MAX_AUTHORS = 6;
+  const PER_PAGE = 50;
+
+  const bestUrl = (w) =>
+    w.primary_location?.landing_page_url ||
+    w.open_access?.oa_url ||
+    (w.doi ? `https://doi.org/${w.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//,'')}` : null) ||
+    w.primary_location?.source?.homepage_url ||
+    w.id;
+
+  const fmtAuthors = (authorships) => {
+    const names = (authorships || []).map(a => {
+      const person = a.author ?? {};
+      const name = person.display_name || person.orcid || "Unknown";
+      const isYou = (person.orcid || "").replace(/^https?:\/\/orcid\.org\//, "") === ORCID;
+      return isYou ? `<strong>${name}</strong>` : name;
+    });
+
+    if (names.length <= MAX_AUTHORS) return names.join(", ");
+    return names.slice(0, MAX_AUTHORS).join(", ") + ", <em>et&nbsp;al.</em>";
+  };
+
+  const fmtVenue = (w) => w.host_venue?.display_name ? `<em>${w.host_venue.display_name}</em>` : "";
+
+  const fmtDOI = (w) => {
+    if (!w.doi) return "";
+    const doiClean = w.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//,'');
+    return ` <a href="https://doi.org/${doiClean}" target="_blank" rel="noopener">DOI</a>`;
+  };
+
+  // === FETCH DATA ===
+  const url = `https://api.openalex.org/works?filter=authorships.author.orcid:${ORCID}&sort=publication_year:desc&per_page=${PER_PAGE}`;
+  const res = await fetch(url, { headers: { "Accept": "application/json" } });
+  const data = await res.json();
+
+  const comments = [];
+  const datasets = [];
+  const all = [];
+
+  (data.results || []).forEach(w => {
+    const title = w.title ?? "(untitled)";
+    const titleLower = title.toLowerCase();
+    const year = w.publication_year ?? "";
+    const authors = fmtAuthors(w.authorships);
+    const venue = fmtVenue(w);
+    const link = bestUrl(w) || "#";
+    const doi = fmtDOI(w);
+
+    const itemHTML = `
+      <li class="pub-item">
+        <span class="pub-title"><a href="${link}" target="_blank" rel="noopener">${title}</a></span><br>
+        <span class="pub-authors">${authors}</span>${venue ? `, ${venue}` : ""} ${year ? ` (${year})` : ""}
+        ${doi}
+      </li>
+    `;
+
+    // Sort based on title keywords
+    if (titleLower.includes("comment on") || titleLower.includes("response to")) {
+      comments.push(itemHTML);
+    } else if (titleLower.includes("data")) {
+      datasets.push(itemHTML);
+    } else {
+      all.push(itemHTML);
+    }
+  });
+
+  // === RENDER ===
+  const renderSection = (id, title, items) => {
+    if (!items.length) return;
+    document.getElementById(id).innerHTML = `
+      <h2>${title}</h2>
+      <ul class="pubs-list">${items.join("")}</ul>
+    `;
+  };
+
+  renderSection("comments-responses", "Comments & Responses", comments);
+  renderSection("datasets", "Datasets", datasets);
+  renderSection("all-publications", "Articles", all);
+})();
+</script>
+
+
+
+
+
+
+
+
+<!-- <div id="pubs"></div>
+<script>
+(async () => {
+  const orcid = "0000-0003-3950-0881"; // <- your ORCID
+  const url = `https://api.openalex.org/works?filter=authorships.author.orcid:${orcid}&sort=publication_year:desc&per_page=25`;
+  const res = await fetch(url, {headers:{'Accept':'application/json'}});
+  const data = await res.json();
+  const items = (data.results || []).map(w => {
+    const title = w.title ?? "(untitled)";
+    const venue = w.host_venue?.display_name ?? "";
+    const year = w.publication_year ?? "";
+    const doi = w.doi ? `<a href="https://doi.org/${w.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//,'')}" target="_blank" rel="noopener">DOI</a>` : "";
+    const url = w.primary_location?.source?.homepage_url || w.primary_location?.landing_page_url || w.open_access?.oa_url || w.doi || "#";
+    return `<li><a href="${url}" target="_blank" rel="noopener">${title}</a> ${venue ? `<em>${venue}</em>` : ""} ${year ? `(${year})` : ""} ${doi}</li>`;
+  }).join("");
+  document.querySelector("#pubs").innerHTML = `<ul>${items}</ul>`;
+})();
+</script> -->
+
+
+
+
+<!-- New style rendering if publication categories are defined -->
+<!-- {% if site.publication_category %}
+  {% for category in site.publication_category  %}
+    {% assign title_shown = false %}
+    {% for post in site.publications reversed %}
+      {% if post.category != category[0] %}
+        {% continue %}
+      {% endif %}
+      {% unless title_shown %}
+        <h2>{{ category[1].title }}</h2><hr />
+        {% assign title_shown = true %}
+      {% endunless %}
+      {% include archive-single.html %}
+    {% endfor %}
+  {% endfor %}
+{% else %}
+  {% for post in site.publications reversed %}
+    {% include archive-single.html %}
+  {% endfor %}
+{% endif %} -->
+
+
+
