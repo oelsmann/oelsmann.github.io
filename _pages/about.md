@@ -74,7 +74,7 @@ Marie-Curie Postdoctoral GF @Tulane University and @TUM
 <div class="container mx-0 px-0">
   <div class="row" id="github-repos"></div>
 </div>
-
+{% raw %}
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const username = "oelsmann";
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-
+{% endraw %}
 
 
 ## Recent Service Roles
