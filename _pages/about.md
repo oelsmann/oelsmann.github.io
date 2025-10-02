@@ -47,8 +47,8 @@ Marie-Curie Postdoctoral GF @Tulane University and @TUM
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
+    crossorigin="anonymous">
+  </script>
 
 <style>
 
@@ -74,7 +74,10 @@ Marie-Curie Postdoctoral GF @Tulane University and @TUM
 <div class="container mx-0 px-0">
   <div class="row" id="github-repos"></div>
 </div>
+
+
 {% raw %}
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const username = "oelsmann";
@@ -86,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
   })
     .then(res => res.json())
     .then(async repos => {
-      if (repos.message) throw new Error(repos.message); // handle API error
+      if (repos.message) throw new Error(repos.message); 
       const selected = repos.filter(r => targetRepos.includes(r.name));
 
       for (const repo of selected) {
@@ -129,6 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
+
 {% endraw %}
 
 
