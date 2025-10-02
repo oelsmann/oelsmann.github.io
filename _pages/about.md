@@ -67,6 +67,71 @@ Marie-Curie Postdoctoral GF @Tulane University and @TUM
 
 
 
+
+
+## GitHub Projects
+
+<div class="container mx-0 px-0 ">
+  <div class="row" id="github-repos"></div>
+</div>
+
+
+<script>
+  const username = "oelsmann"; // Your GitHub username
+  const targetRepos = ['sealeveltools', 'bpca', 'discotimes'];
+
+  fetch(`https://api.github.com/users/${username}/repos`)
+    .then(res => res.json())
+    .then(async repos => {
+      const container = document.getElementById("github-repos");
+
+      const selected = repos.filter(repo => targetRepos.includes(repo.name));
+
+      for (const repo of selected) {
+        let hasNotebook = false;
+
+        // Check for .ipynb files in the repo (optional but more accurate)
+        const contentsRes = await fetch(repo.contents_url.replace('{+path}', ''));
+        if (contentsRes.ok) {
+          const contents = await contentsRes.json();
+          hasNotebook = contents.some(file => file.name.endsWith('.ipynb'));
+        }
+
+        const notebookIcon = hasNotebook || repo.language === "Jupyter Notebook" ? "🟠" : "";
+        const languageBadge = repo.language ? `<span class="badge bg-secondary">${repo.language}</span>` : "";
+
+        const card = document.createElement("div");
+        card.className = "col-md-4 mb-4 px-1";
+
+        card.innerHTML = `
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column p">
+              <h5 class="card-title">
+                <a href="${repo.html_url}" class="link-dark" target="_blank" rel="noopener">${repo.name}</a>
+              </h5>
+              <p class="card-text" style="color: gray;">${repo.description || "No description provided."}</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <div>
+                  ${notebookIcon}
+                  ${languageBadge}
+                </div>
+                <div style="color: gray; font-size: 1.2em;">☆ ${repo.stargazers_count}</div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    })
+    .catch(error => {
+      console.error("GitHub API error:", error);
+      document.getElementById("github-repos").innerHTML =
+        "<p>Failed to load repositories.</p>";
+    });
+</script>
+
+
+
 ## Recent Service Roles
 
 
